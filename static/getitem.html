@@ -68,20 +68,22 @@
 var g_itemVO={}
 
 	jQuery(document).ready(function(){
-	//	$("#createorder").on("click",function(){
+		//reloadDom();
+
+		$("#createorder").on("click",function(){
 			$.ajax({
-			type:"GET",
-			//contentType:"application/x-www-form-urlencoded",
-			url:"http://localhost:8080/item/get",
+			type:"POST",
+			contentType:"application/x-www-form-urlencoded",
+			url:"http://localhost:8080/order/createorder",
 			data:{
-				"id":getParam("id"),
+				"itemId":g_itemVO.id,
+				"amount":1,
 			},
 			xhrFields:{withCredentials:true},
 			success:function(data){
 				if(data.status=="success"){
-					g_itemVO=data.data;
-					reloadDom();
-				//	alert("下单成功");
+					alert("下单成功");
+					window.location.reload();
 				}else{
 				
 					alert("下单失败,原因为"+data.data.errMsg);
@@ -95,9 +97,30 @@ var g_itemVO={}
 				alert("下单失败,原因为"+data.responseText);
 			}
 			});		
-	//	});
+		});
 		
+		$.ajax({
+		type:"GET",
+		url:"http://localhost:8080/item/get",
+		data:{
+			"id":getParam("id"),
+		},
+		xhrFields:{withCredentials:true},
+		success:function(data){
+			if(data.status=="success"){
+				g_itemVO=data.data;
+				reloadDom();
+			}else{
+			
+				alert("获取信息失败,原因为"+data.data.errMsg);
+
+			}
+		},
 		
+		error:function(data){
+			alert("获取信息失败,原因为"+data.responseText);
+		}
+		});			
 
 		
 	

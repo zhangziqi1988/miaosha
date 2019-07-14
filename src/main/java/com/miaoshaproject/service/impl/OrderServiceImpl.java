@@ -75,7 +75,11 @@ public class OrderServiceImpl implements OrderService {
         //生成交易流水号，订单号
         orderModel.setId(generateOrderNo());
         OrderDO orderDO = convertFromOrderModel(orderModel);
+        System.out.println("orderDO:"+orderDO.toString());
         orderDOMapper.insertSelective(orderDO);
+
+        //加上商品的销量
+        itemService.increaseSales(itemId, amount);
         //4.返回前端
         return orderModel;
     }
@@ -93,8 +97,9 @@ public class OrderServiceImpl implements OrderService {
         //获取当前sequence
         int sequence=0;
         SequenceDO sequenceDO=sequenceDOMapper.getSequenceByName("order_info");
-        sequenceDO.getCurrentValue();
+        sequence=sequenceDO.getCurrentValue();
         sequenceDO.setCurrentValue(sequenceDO.getCurrentValue() + sequenceDO.getStep());
+        System.out.println("sequenceDO:"+sequenceDO.toString());
         sequenceDOMapper.updateByPrimaryKeySelective(sequenceDO);
 
         String sequenceStr = String.valueOf(sequence);
