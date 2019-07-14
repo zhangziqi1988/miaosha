@@ -27,7 +27,7 @@
 				<label class="control-label" id="description" />
 			</div>
 		</div>
-		<div class="form-group">
+		<div id="normalPriceContainer" class="form-group">
 			<label class="control-label">价格</label>
 			<div>
 				<label class="control-label" id="price" />
@@ -90,6 +90,7 @@ var g_itemVO={}
 			data:{
 				"itemId":g_itemVO.id,
 				"amount":1,
+				"promoId":g_itemVO.promoId,
 			},
 			xhrFields:{withCredentials:true},
 			success:function(data){
@@ -148,18 +149,30 @@ var g_itemVO={}
 		$("#sales").text(g_itemVO.sales);
 		if(g_itemVO.promoStatus==1){
 			//秒杀活动还未开始
-			var startTime=g_itemVO.startDate.replace(new RegExp("-","gm"),"1");
+			var startTime=g_itemVO.startDate.replace(new RegExp("-","gm"),"/");
 			startTime=(new Date(startTime)).getTime();
 			var nowTime=Date.parse(new Date());
 			var delta=(startTime-nowTime)/1000;
+			
+			if(delta<=0){
+				//活动开始了
+				g_itemVO.promoStatus=2;
+				reloadDom();
+			}
 			$("#promoStartDate").text("秒杀活动将于："+g_itemVO.startDate+" 开始售卖 倒计时："+delta+" 秒");
 			$("#promoPrice").text(g_itemVO.promoPrice);	
 			$("#createorder").attr("disabled",true);
+			$("#createorder").css("background","grey"); 
+			//$("#createorder").attr({"disabled":"disabled"});
 		}else if(g_itemVO.promoStatus==2){
 			//秒杀活动正在进行中
 			$("#promoStartDate").text("秒杀正在进行中");
+			$("#createorder").css("background","blue"); 
 			$("#promoPrice").text(g_itemVO.promoPrice);
 			$("#createorder").attr("disabled",false);
+			$("#normalPriceContainer").hide();
+			//$("#btnzhuce").removeAttr("disabled");
+
 
 
 		
